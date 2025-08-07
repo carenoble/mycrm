@@ -17,8 +17,9 @@ const updateClientSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const token = request.cookies.get('token')?.value
 
   if (!token) {
@@ -40,7 +41,7 @@ export async function GET(
   try {
     const client = await prisma.client.findFirst({
       where: {
-        id: params.id,
+        id: id,
         userId: user.id
       },
       include: {
@@ -84,8 +85,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const token = request.cookies.get('token')?.value
 
   if (!token) {
@@ -110,7 +112,7 @@ export async function PUT(
 
     const client = await prisma.client.updateMany({
       where: {
-        id: params.id,
+        id: id,
         userId: user.id
       },
       data
@@ -124,7 +126,7 @@ export async function PUT(
     }
 
     const updatedClient = await prisma.client.findUnique({
-      where: { id: params.id }
+      where: { id: id }
     })
 
     return NextResponse.json(updatedClient)
@@ -146,8 +148,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const token = request.cookies.get('token')?.value
 
   if (!token) {
@@ -169,7 +172,7 @@ export async function DELETE(
   try {
     const client = await prisma.client.deleteMany({
       where: {
-        id: params.id,
+        id: id,
         userId: user.id
       }
     })

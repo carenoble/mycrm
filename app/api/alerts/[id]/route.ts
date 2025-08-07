@@ -14,8 +14,9 @@ const updateAlertSchema = z.object({
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const token = request.cookies.get('token')?.value
 
   if (!token) {
@@ -50,7 +51,7 @@ export async function PUT(
 
     const alert = await prisma.alert.updateMany({
       where: {
-        id: params.id,
+        id: id,
         userId: user.id
       },
       data: updateData
@@ -64,7 +65,7 @@ export async function PUT(
     }
 
     const updatedAlert = await prisma.alert.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         client: {
           select: {
@@ -95,8 +96,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const token = request.cookies.get('token')?.value
 
   if (!token) {
@@ -118,7 +120,7 @@ export async function DELETE(
   try {
     const alert = await prisma.alert.deleteMany({
       where: {
-        id: params.id,
+        id: id,
         userId: user.id
       }
     })
