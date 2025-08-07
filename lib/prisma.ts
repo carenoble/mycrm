@@ -13,14 +13,15 @@ export const prisma =
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 // Helper function to check if database is available
-export async function isDatabaseAvailable(): Promise<boolean> {
-  if (!prisma) return false
+export async function isDatabaseAvailable(): Promise<{ connected: boolean; error?: string }> {
+  if (!prisma) return { connected: false, error: 'Prisma client not initialized' }
   
   try {
     await prisma.$queryRaw`SELECT 1`
-    return true
+    return { connected: true }
   } catch (error) {
     console.error('Database connection failed:', error)
-    return false
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return { connected: false, error: errorMessage }
   }
 }
