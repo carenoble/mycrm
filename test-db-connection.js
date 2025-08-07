@@ -23,7 +23,10 @@ async function testConnection() {
     connectionString: databaseUrl,
     ssl: {
       rejectUnauthorized: false
-    }
+    },
+    connectionTimeoutMillis: 10000,
+    query_timeout: 10000,
+    statement_timeout: 10000
   });
 
   try {
