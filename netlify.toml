@@ -1,0 +1,29 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "10"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[context.production.environment]
+  NODE_ENV = "production"
+
+# Ignore node_modules and .next during builds
+[build.ignore]
+  command = "git diff --quiet HEAD^ HEAD -- package.json package-lock.json"
+
+# Cache node_modules but not .next/cache to avoid Prisma issues
+[build.cache]
+  node_modules = ["node_modules"]
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"

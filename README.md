@@ -125,13 +125,42 @@ NEXTAUTH_URL="http://localhost:3000"
 
 ## Production Deployment
 
-For production deployment:
+### Netlify Deployment
+
+This project is optimized for Netlify deployment with the Next.js plugin:
+
+1. **Database Setup**: SQLite won't work on Netlify. Set up a cloud database:
+   - **Recommended**: [Supabase](https://supabase.com) (PostgreSQL)
+   - **Alternative**: [PlanetScale](https://planetscale.com) (MySQL)
+   - **Alternative**: [Railway](https://railway.app) (PostgreSQL)
+
+2. **Environment Variables** (set in Netlify dashboard):
+   ```env
+   DATABASE_URL="postgresql://username:password@hostname:port/database"
+   JWT_SECRET="your-secure-secret-key"
+   NODE_ENV="production"
+   ```
+
+3. **Netlify Configuration**: The `netlify.toml` file is already configured with:
+   - Next.js build command with Prisma generation
+   - Proper caching settings
+   - Security headers
+
+4. **Build Process**:
+   - The build automatically runs `prisma generate` before building
+   - Prisma Client is generated fresh on each deploy
+   - No manual migration needed (Prisma handles schema sync)
+
+### Manual Deployment
+
+For other platforms:
 
 1. Use a production database (PostgreSQL recommended)
 2. Set up cloud storage for file uploads (AWS S3, etc.)
 3. Configure proper environment variables
-4. Set up SSL certificates
-5. Consider using a CDN for static assets
+4. Run database migrations: `npx prisma migrate deploy`
+5. Set up SSL certificates
+6. Consider using a CDN for static assets
 
 ## Contributing
 
