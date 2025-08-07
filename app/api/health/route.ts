@@ -8,12 +8,19 @@ export async function GET() {
     environment: process.env.NODE_ENV || 'unknown',
     database: {
       connected: false,
+      provider: 'postgresql',
       url: process.env.DATABASE_URL ? 'configured' : 'not configured'
+    },
+    supabase: {
+      url: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      key: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      urlValue: process.env.NEXT_PUBLIC_SUPABASE_URL || 'not set'
     },
     env: {
       jwtSecret: !!process.env.JWT_SECRET,
       databaseUrl: !!process.env.DATABASE_URL,
-      nodeEnv: process.env.NODE_ENV
+      nodeEnv: process.env.NODE_ENV,
+      supabaseConfigured: !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
     }
   }
 

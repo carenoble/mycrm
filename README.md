@@ -125,21 +125,27 @@ NEXTAUTH_URL="http://localhost:3000"
 
 ## Production Deployment
 
-### Netlify Deployment
+### Netlify Deployment with Supabase
 
-This project is optimized for Netlify deployment with the Next.js plugin:
+This project is configured to use Supabase as the database provider:
 
-1. **Database Setup**: SQLite won't work on Netlify. Set up a cloud database:
-   - **Recommended**: [Supabase](https://supabase.com) (PostgreSQL)
-   - **Alternative**: [PlanetScale](https://planetscale.com) (MySQL)
-   - **Alternative**: [Railway](https://railway.app) (PostgreSQL)
+1. **Supabase Setup**:
+   - The project is already configured with Supabase credentials
+   - Database: `https://hcgjyajlienvmxgbtvff.supabase.co`
+   - You need the database password to complete the setup
 
 2. **Environment Variables** (set in Netlify dashboard):
    ```env
-   DATABASE_URL="postgresql://username:password@hostname:port/database"
+   NEXT_PUBLIC_SUPABASE_URL=https://hcgjyajlienvmxgbtvff.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ2p5YWpsaWVudm14Z2J0dmZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NjQwNjcsImV4cCI6MjA3MDE0MDA2N30.lcujfofxwRTvHBbxkAcQfSnuULCYhbcYvkmf_RNMHgo
+   DATABASE_URL="postgresql://postgres:[YOUR_PASSWORD]@db.hcgjyajlienvmxgbtvff.supabase.co:5432/postgres"
    JWT_SECRET="your-secure-secret-key"
    NODE_ENV="production"
    ```
+
+3. **Database Migration**:
+   - Once environment variables are set, Prisma will automatically create the database schema
+   - The database tables will be created on first deployment
 
 3. **Netlify Configuration**: The `netlify.toml` file is already configured with:
    - Next.js build command with Prisma generation
