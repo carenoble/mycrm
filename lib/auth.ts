@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from './prisma'
 import bcrypt from 'bcryptjs'
 const jwt = require('jsonwebtoken')
-
-const prisma = new PrismaClient()
 
 export interface JWTPayload {
   userId: string

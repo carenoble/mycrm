@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import { verifyPassword, generateToken } from '@/lib/auth'
+import { handleApiError } from '@/lib/api-error-handler'
 import { z } from 'zod'
 
 const loginSchema = z.object({
@@ -54,10 +55,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error('Login error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
