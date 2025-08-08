@@ -131,7 +131,9 @@ JWT_SECRET="your-secret-key-here"
 
 ## Production Deployment
 
-### Deployment Configuration
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions, including Netlify setup and database configuration.
+
+### Quick Deployment Configuration
 
 1. **Database Setup**:
    - Choose your database provider (PostgreSQL, MySQL, or SQLite)
