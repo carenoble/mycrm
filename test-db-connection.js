@@ -1,7 +1,6 @@
 // Test database connection
 require('dotenv').config();
-
-const { Client } = require('pg');
+const { PrismaClient } = require('@prisma/client');
 
 async function testConnection() {
   const databaseUrl = process.env.DATABASE_URL;
@@ -11,44 +10,34 @@ async function testConnection() {
     return;
   }
 
-  if (databaseUrl.includes('[YOUR_PASSWORD]')) {
-    console.log('❌ DATABASE_URL still contains placeholder. Please replace [YOUR_PASSWORD] with actual password.');
-    return;
+  console.log('🔍 Testing database connection...');
+  
+  const isSQLite = databaseUrl.startsWith('file:');
+  
+  if (isSQLite) {
+    console.log('Database Type: SQLite');
+    console.log('Database File:', databaseUrl.replace('file:', ''));
+  } else {
+    console.log('Database URL:', databaseUrl.replace(/:([^:@]+)@/, ':****@')); // Hide password
   }
 
-  console.log('🔍 Testing database connection...');
-  console.log('Database URL:', databaseUrl.replace(/:([^:@]+)@/, ':****@')); // Hide password
-
-  const client = new Client({
-    connectionString: databaseUrl,
-    ssl: {
-      rejectUnauthorized: false
-    },
-    connectionTimeoutMillis: 10000,
-    query_timeout: 10000,
-    statement_timeout: 10000
-  });
+  const prisma = new PrismaClient();
 
   try {
-    await client.connect();
+    await prisma.$connect();
     console.log('✅ Database connection successful!');
     
     // Test if tables exist
-    const result = await client.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
-      AND table_name IN ('User', 'Client', 'Buyer', 'Alert')
-    `);
+    const userCount = await prisma.user.count();
+    const clientCount = await prisma.client.count();
+    const buyerCount = await prisma.buyer.count();
+    const alertCount = await prisma.alert.count();
     
-    if (result.rows.length > 0) {
-      console.log('✅ Database tables found:');
-      result.rows.forEach(row => {
-        console.log(`  - ${row.table_name}`);
-      });
-    } else {
-      console.log('⚠️  No CRM tables found. You need to run the SQL schema.');
-    }
+    console.log('✅ Database tables found:');
+    console.log(`  - Users: ${userCount} records`);
+    console.log(`  - Clients: ${clientCount} records`);
+    console.log(`  - Buyers: ${buyerCount} records`);
+    console.log(`  - Alerts: ${alertCount} records`);
     
   } catch (error) {
     console.log('❌ Database connection failed:');
@@ -56,11 +45,11 @@ async function testConnection() {
     
     if (error.message.includes('password authentication failed')) {
       console.log('\n💡 This means the password is incorrect.');
-      console.log('   Go to Supabase Dashboard > Settings > Database to get the correct connection string.');
+      console.log('   Check your DATABASE_URL in the .env file.');
     }
     
   } finally {
-    await client.end();
+    await prisma.$disconnect();
   }
 }
 

@@ -17,7 +17,7 @@ A comprehensive Lead Tracker CRM system designed specifically for business broke
 
 - **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes
-- **Database**: SQLite with Prisma ORM
+- **Database**: PostgreSQL/MySQL/SQLite with Prisma ORM
 - **Authentication**: JWT tokens with HTTP-only cookies
 - **File Storage**: Local filesystem (can be easily extended to cloud storage)
 - **UI Components**: Lucide React icons, React Hook Form, Zod validation
@@ -78,7 +78,7 @@ crm-lead-tracker/
 
 ## Database Schema
 
-The application uses SQLite with the following main entities:
+The application uses Prisma ORM with the following main entities:
 
 - **Users** - System users (brokers)
 - **Clients** - Care homes and care agencies for sale
@@ -117,47 +117,43 @@ The application uses SQLite with the following main entities:
 The following environment variables are used:
 
 ```env
+# For SQLite (local development)
 DATABASE_URL="file:./dev.db"
+
+# For PostgreSQL (production)
+# DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+
+# For MySQL
+# DATABASE_URL="mysql://user:password@localhost:3306/dbname"
+
 JWT_SECRET="your-secret-key-here"
-NEXTAUTH_SECRET="your-nextauth-secret-here"
-NEXTAUTH_URL="http://localhost:3000"
 ```
 
 ## Production Deployment
 
-### Netlify Deployment with Supabase
+### Deployment Configuration
 
-This project is configured to use Supabase as the database provider:
+1. **Database Setup**:
+   - Choose your database provider (PostgreSQL, MySQL, or SQLite)
+   - Create a database instance
+   - Update the DATABASE_URL in your environment variables
 
-1. **Supabase Setup**:
-   - The project is already configured with Supabase credentials
-   - Database: `https://hcgjyajlienvmxgbtvff.supabase.co`
-   - You need the database password to complete the setup
-
-2. **Environment Variables** (set in Netlify dashboard):
+2. **Environment Variables** (set in your deployment platform):
    ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://hcgjyajlienvmxgbtvff.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjZ2p5YWpsaWVudm14Z2J0dmZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NjQwNjcsImV4cCI6MjA3MDE0MDA2N30.lcujfofxwRTvHBbxkAcQfSnuULCYhbcYvkmf_RNMHgo
-   DATABASE_URL="postgresql://postgres:[YOUR_PASSWORD]@db.hcgjyajlienvmxgbtvff.supabase.co:5432/postgres"
+   DATABASE_URL="your-database-connection-string"
    JWT_SECRET="your-secure-secret-key"
    NODE_ENV="production"
    ```
 
 3. **Database Migration**:
-   - Once environment variables are set, Prisma will automatically create the database schema
-   - The database tables will be created on first deployment
-
-3. **Netlify Configuration**: The `netlify.toml` file is already configured with:
-   - Next.js build command with Prisma generation
-   - Proper caching settings
-   - Security headers
+   - Run migrations: `npx prisma migrate deploy`
+   - Or generate schema: `npx prisma db push`
 
 4. **Build Process**:
    - The build automatically runs `prisma generate` before building
    - Prisma Client is generated fresh on each deploy
-   - No manual migration needed (Prisma handles schema sync)
 
-### Manual Deployment
+### Platform-Specific Deployment
 
 For other platforms:
 
